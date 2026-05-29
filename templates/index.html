@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LPIS → KML pro DJI FlightHub 2</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #eef3ee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 1rem 4rem;
+      color: #1a2e1a;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1f5c1f;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      margin-top: 0.4rem;
+      color: #557355;
+      font-size: 0.93rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+      padding: 2rem 2.2rem;
+      width: 100%;
+      max-width: 540px;
+    }
+
+    /* ── Upload zone ── */
+    .upload-zone {
+      border: 2px dashed #7ab87a;
+      border-radius: 10px;
+      padding: 2rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      margin-bottom: 1.6rem;
+      position: relative;
+    }
+    .upload-zone:hover,
+    .upload-zone.drag-over {
+      background: #f0f9f0;
+      border-color: #3a7d3a;
+    }
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .upload-icon {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+    .upload-zone p {
+      font-size: 0.9rem;
+      color: #557355;
+    }
+    .upload-zone strong {
+      color: #1f5c1f;
+    }
+    #file-name {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: #3a7d3a;
+      font-weight: 600;
+      min-height: 1.2em;
+    }
+
+    /* ── Form fields ── */
+    .field {
+      margin-bottom: 1.2rem;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #3a5c3a;
+      margin-bottom: 0.35rem;
+    }
+    label .optional {
+      font-weight: 400;
+      color: #88a888;
+      font-size: 0.8rem;
+    }
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 1.5px solid #c8dcc8;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+      color: #1a2e1a;
+      background: #fafefa;
+    }
+    input:focus {
+      border-color: #3a7d3a;
+      box-shadow: 0 0 0 3px rgba(58,125,58,0.12);
+    }
+    .hint {
+      margin-top: 0.3rem;
+      font-size: 0.78rem;
+      color: #88a888;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 1rem 0 1.2rem;
+      color: #aac8aa;
+      font-size: 0.78rem;
+    }
+    .divider::before, .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #dceadc;
+    }
+
+    /* ── Submit button ── */
+    button[type="submit"] {
+      width: 100%;
+      padding: 0.8rem;
+      background: #2d6a2d;
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      margin-top: 0.4rem;
+    }
+    button[type="submit"]:hover:not(:disabled) {
+      background: #1f5c1f;
+    }
+    button[type="submit"]:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+    button[type="submit"]:disabled {
+      background: #8ab88a;
+      cursor: not-allowed;
+    }
+
+    /* ── Messages ── */
+    .msg {
+      display: none;
+      margin-top: 1.2rem;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .msg.error {
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      color: #b91c1c;
+    }
+    .msg.success {
+      background: #f0faf0;
+      border: 1px solid #86efac;
+      color: #15803d;
+    }
+    .msg.show { display: block; }
+
+    /* ── Loading overlay ── */
+    #loading {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(240,244,240,0.75);
+      backdrop-filter: blur(2px);
+      z-index: 100;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+    #loading.show { display: flex; }
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 4px solid #c8dcc8;
+      border-top-color: #2d6a2d;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loading p {
+      font-size: 0.95rem;
+      color: #2d6a2d;
+      font-weight: 600;
+    }
+
+    /* ── Tips ── */
+    .tips {
+      width: 100%;
+      max-width: 540px;
+      margin-top: 1.6rem;
+    }
+    .tips details {
+      background: #fff;
+      border-radius: 10px;
+      padding: 0.9rem 1.1rem;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+      cursor: pointer;
+    }
+    .tips summary {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #3a5c3a;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .tips summary::before { content: "ℹ️"; }
+    .tips ul {
+      margin-top: 0.75rem;
+      padding-left: 1.2rem;
+      font-size: 0.84rem;
+      color: #4a6a4a;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🌾 LPIS → KML</h1>
+    <p>Export půdních bloků pro DJI FlightHub 2 (záchrana srnčat)</p>
+  </header>
+
+  <div class="card">
+    <form id="convert-form" novalidate>
+
+      <!-- File upload -->
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" name="zip_file" id="zip-input" accept=".zip" required />
+        <div class="upload-icon">📦</div>
+        <p><strong>Přetáhni ZIP soubor sem</strong><br>nebo klikni pro výběr</p>
+        <div id="file-name"></div>
+      </div>
+
+      <!-- ID_UZ -->
+      <div class="field">
+        <label for="id_uz">ID_UZ zemědělského subjektu</label>
+        <input type="number" id="id_uz" name="id_uz" placeholder="např. 89677" required min="1" />
+        <div class="hint">
+          Najdeš ho na
+          <a href="https://mze.gov.cz/public/app/lpisext/lpis/verejny2/plpis/" target="_blank" rel="noopener" style="color:#2d6a2d">mze.gov.cz → LPIS veřejný</a>
+          jako „ID LPIS"
+        </div>
+      </div>
+
+      <!-- Output name -->
+      <div class="field">
+        <label for="output_name">Název výstupního souboru <span class="optional">(volitelné)</span></label>
+        <input type="text" id="output_name" name="output_name" placeholder="např. AGROFARMA_XYZ" />
+        <div class="hint">Bez přípony. Lomítko / nahraď podtržítkem _ (např. 6903_9)</div>
+      </div>
+
+      <div class="divider">nebo exportuj jediný blok</div>
+
+      <!-- Block number (solo mode) -->
+      <div class="field">
+        <label for="block_number">Číslo půdního bloku <span class="optional">(volitelné)</span></label>
+        <input type="text" id="block_number" name="block_number" placeholder="např. 6903/9" />
+        <div class="hint">Vyplň jen pokud chceš exportovat jediný konkrétní blok</div>
+      </div>
+
+      <button type="submit" id="submit-btn">Převést a stáhnout KML</button>
+
+      <div class="msg error" id="error-msg"></div>
+      <div class="msg success" id="success-msg"></div>
+    </form>
+  </div>
+
+  <div class="tips">
+    <details>
+      <summary>Kde stáhnout ZIP soubor s SHP daty?</summary>
+      <ul>
+        <li>Jdi na <strong>eagri.cz → LPIS data</strong></li>
+        <li>Nastav: <strong>Entita = DPB</strong>, <strong>Typ = SHP</strong>, Území = Okres</li>
+        <li>Klikni <em>Vygenerovat seznam souborů</em> a stáhni první řádek (celý okres)</li>
+        <li>Pokud se nenajdou žádné bloky, stáhni i sousední okresy a spoj ZIP soubory do jednoho</li>
+        <li>Data se aktualizují týdně — stahuj vždy nejnovější export</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- Loading overlay -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <p>Zpracovávám SHP data…</p>
+  </div>
+
+  <script>
+    const form = document.getElementById("convert-form");
+    const zipInput = document.getElementById("zip-input");
+    const uploadZone = document.getElementById("upload-zone");
+    const fileNameEl = document.getElementById("file-name");
+    const submitBtn = document.getElementById("submit-btn");
+    const errorMsg = document.getElementById("error-msg");
+    const successMsg = document.getElementById("success-msg");
+    const loading = document.getElementById("loading");
+
+    // Drag & drop visual feedback
+    uploadZone.addEventListener("dragover", e => { e.preventDefault(); uploadZone.classList.add("drag-over"); });
+    uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("drag-over"));
+    uploadZone.addEventListener("drop", e => {
+      e.preventDefault();
+      uploadZone.classList.remove("drag-over");
+      if (e.dataTransfer.files[0]) {
+        zipInput.files = e.dataTransfer.files;
+        showFileName(e.dataTransfer.files[0].name);
+      }
+    });
+
+    zipInput.addEventListener("change", () => {
+      if (zipInput.files[0]) showFileName(zipInput.files[0].name);
+    });
+
+    function showFileName(name) {
+      fileNameEl.textContent = "✓ " + name;
+    }
+
+    function setLoading(on) {
+      loading.classList.toggle("show", on);
+      submitBtn.disabled = on;
+    }
+
+    function showError(text) {
+      errorMsg.textContent = text;
+      errorMsg.classList.add("show");
+      successMsg.classList.remove("show");
+    }
+
+    function showSuccess(text) {
+      successMsg.textContent = text;
+      successMsg.classList.add("show");
+      errorMsg.classList.remove("show");
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorMsg.classList.remove("show");
+      successMsg.classList.remove("show");
+
+      if (!zipInput.files[0]) { showError("Vyberte ZIP soubor."); return; }
+      const idUz = document.getElementById("id_uz").value.trim();
+      if (!idUz) { showError("Zadejte ID_UZ."); return; }
+
+      setLoading(true);
+
+      try {
+        const formData = new FormData(form);
+        const response = await fetch("/convert", { method: "POST", body: formData });
+
+        if (!response.ok) {
+          let msg = "Chyba při zpracování.";
+          try { msg = (await response.json()).error; } catch (_) {}
+          showError(msg);
+          return;
+        }
+
+        const count = response.headers.get("X-Block-Count");
+        const blob = await response.blob();
+
+        // Extract filename from Content-Disposition header
+        const cd = response.headers.get("Content-Disposition") || "";
+        const match = cd.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+        const filename = match ? match[1].replace(/['"]/g, "") : "lpis_export.kml";
+
+        // Trigger browser download
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+
+        showSuccess(`✓ Hotovo! Exportováno ${count ?? "?"} půdních bloků → ${filename}`);
+      } catch (err) {
+        showError("Chyba sítě nebo serveru. Zkuste to znovu.");
+      } finally {
+        setLoading(false);
+      }
+    });
+  </script>
+</body>
+</html>
