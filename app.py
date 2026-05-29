@@ -18,6 +18,11 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/wiki")
+def wiki():
+    return render_template("wiki.html")
+
+
 @app.route("/convert", methods=["POST"])
 def convert():
     if "zip_file" not in request.files or not request.files["zip_file"].filename:
