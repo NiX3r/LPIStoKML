@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!-- Link-preview image (og:image), 1280×640. Regenerate: serve the repo root, open this page at 1280×640 and
+     screenshot it to web/og-image.png (see tools/README.md). Uses the screenshots in docs/images/. -->
+<html lang="cs">
+<head>
+<meta charset="UTF-8" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1280px; height: 640px; overflow: hidden; }
+  body {
+    font-family: "Segoe UI", -apple-system, Roboto, sans-serif;
+    background: #eef3ee;
+    color: #1a2e1a;
+    position: relative;
+  }
+  body::before, body::after {
+    content: ""; position: absolute; left: 0; right: 0; height: 14px; background: #2d6a2d;
+  }
+  body::before { top: 0; }
+  body::after { bottom: 0; }
+  /* faint field-strip pattern */
+  .fields {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(115deg, transparent 0 46px, rgba(45,106,45,0.045) 46px 92px);
+  }
+  .left { position: absolute; left: 72px; top: 62px; width: 620px; }
+  .logo { display: flex; align-items: center; gap: 18px; }
+  .logo img { width: 66px; height: 66px; }
+  .logo h1 { font-size: 68px; font-weight: 800; letter-spacing: -2px; color: #1f5c1f; line-height: 1; }
+  .tag { margin-top: 10px; font-size: 22px; color: #557355; font-weight: 600; }
+  .headline { margin-top: 28px; font-size: 33px; font-weight: 800; line-height: 1.18; letter-spacing: -0.5px; }
+  .headline em { font-style: normal; color: #2d6a2d; }
+  ul { list-style: none; margin-top: 24px; }
+  li { display: flex; align-items: center; gap: 16px; font-size: 22px; font-weight: 600; margin-bottom: 12px; color: #2a3f2a; }
+  li span {
+    width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+    display: grid; place-items: center; font-size: 17px; color: #fff; background: #2d6a2d;
+  }
+  .url {
+    position: absolute; left: 72px; bottom: 50px;
+    background: #fff; border: 3px solid #2d6a2d; border-radius: 40px;
+    padding: 10px 28px; font-size: 25px; font-weight: 700; color: #1f5c1f;
+    box-shadow: 5px 5px 0 #2d6a2d;
+  }
+  /* browser window with the app */
+  .window {
+    position: absolute; left: 700px; top: 58px; width: 640px; height: 640px;
+    background: #fff; border-radius: 14px; overflow: hidden;
+    box-shadow: 0 18px 50px rgba(20, 60, 20, 0.25);
+    transform: rotate(-3deg);
+  }
+  .bar { height: 38px; background: #dfe9df; display: flex; align-items: center; gap: 8px; padding: 0 16px; }
+  .bar i { width: 12px; height: 12px; border-radius: 50%; background: #b9cdb9; display: block; }
+  .bar b {
+    margin-left: 14px; flex: 1; height: 22px; border-radius: 11px; background: #fff;
+    font: 600 12px "Segoe UI", sans-serif; color: #557355; display: flex; align-items: center; padding-left: 12px;
+  }
+  .window img { display: block; width: 900px; margin-left: -130px; margin-top: -14px; }
+  /* floating preview card */
+  .card {
+    position: absolute; left: 905px; top: 260px; width: 360px;
+    background: #fff; border-radius: 14px; padding: 8px;
+    box-shadow: 0 20px 50px rgba(20, 60, 20, 0.3);
+    transform: rotate(3deg);
+  }
+  .card img { display: block; width: 100%; border-radius: 8px; }
+  .badge {
+    position: absolute; left: 880px; top: 228px;
+    background: #2d6a2d; color: #fff; font-weight: 700; font-size: 18px;
+    padding: 7px 16px; border-radius: 20px; transform: rotate(3deg);
+    box-shadow: 0 6px 16px rgba(20, 60, 20, 0.3); z-index: 2;
+  }
+</style>
+</head>
+<body>
+  <div class="fields"></div>
+  <div class="left">
+    <div class="logo"><img src="../web/favicon.svg" alt="" /><h1>LPIS → KML</h1></div>
+    <p class="tag">Půdní bloky pro DJI FlightHub 2</p>
+    <p class="headline">Naplánuj let dronem před sečením.<br><em>Zachraň srnčata.</em></p>
+    <ul>
+      <li><span>1</span>Bloky hospodáře podle ID_UZ z LPIS</li>
+      <li><span>2</span>S-JTSK → WGS-84, náhled polí</li>
+      <li><span>3</span>Zdarma · data neopustí tvůj počítač</li>
+    </ul>
+  </div>
+  <div class="url">nix3r.github.io/LPIStoKML</div>
+
+  <div class="window">
+    <div class="bar"><i></i><i></i><i></i><b>LPIS → KML pro DJI FlightHub 2</b></div>
+    <img src="../docs/images/converter.png" alt="" />
+  </div>
+  <div class="badge">✓ 6 půdních bloků → KML</div>
+  <div class="card"><img src="../docs/images/preview.png" alt="" /></div>
+</body>
+</html>

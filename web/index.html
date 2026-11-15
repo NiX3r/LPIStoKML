@@ -4,7 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LPIS → KML pro DJI FlightHub 2</title>
-  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <meta name="description" content="Převod půdních bloků z LPIS (SHP) do KML pro DJI FlightHub 2. Pro plánování dronových letů při záchraně srnčat před sečením. Vše běží v prohlížeči." />
+  <meta name="theme-color" content="#2d6a2d" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <!-- Link previews (absolute URLs; the Pages workflow swaps in the real site URL) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="LPIS → KML" />
+  <meta property="og:locale" content="cs_CZ" />
+  <meta property="og:title" content="LPIS → KML pro DJI FlightHub 2" />
+  <meta property="og:description" content="Půdní bloky hospodáře z LPIS jako KML pro DJI FlightHub 2. Naplánuj let dronem před sečením a zachraň srnčata. Zdarma, data neopustí tvůj počítač." />
+  <meta property="og:url" content="https://nix3r.github.io/LPIStoKML/" />
+  <meta property="og:image" content="https://nix3r.github.io/LPIStoKML/og-image.png" />
+  <meta property="og:image:width" content="1280" />
+  <meta property="og:image:height" content="640" />
+  <meta property="og:image:alt" content="LPIS → KML: převodník půdních bloků s náhledem exportovaných polí" />
+  <meta name="twitter:card" content="summary_large_image" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -87,6 +101,7 @@
       color: #3a7d3a;
       font-weight: 600;
       min-height: 1.2em;
+      white-space: pre-line;
     }
 
     /* ── Form fields ── */
@@ -218,6 +233,61 @@
       font-weight: 600;
     }
 
+    /* ── Preview ── */
+    .preview {
+      width: 100%;
+      max-width: 540px;
+      margin-top: 1.6rem;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+      padding: 1.2rem 1.4rem 1.4rem;
+    }
+    .preview[hidden] { display: none; }
+    .preview-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.88rem;
+      color: #557355;
+    }
+    .preview-head strong { color: #1f5c1f; font-size: 0.95rem; white-space: nowrap; }
+    #preview-sub { text-align: right; }
+    #preview-map {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #f4f9f4;
+      border: 1px solid #dceadc;
+      border-radius: 10px;
+    }
+    #preview-map path {
+      fill: rgba(0, 200, 0, 0.35);
+      fill-rule: evenodd;
+      stroke: #1f8a1f;
+      stroke-width: 1.5;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+    #preview-map text {
+      font: 600 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      fill: #143d14;
+      paint-order: stroke;
+      stroke: #fff;
+      stroke-width: 3px;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    .privacy {
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: #6a8a6a;
+      text-align: center;
+    }
+
     /* ── Tips ── */
     .tips {
       width: 100%;
@@ -255,7 +325,7 @@
   <header>
     <h1>🌾 LPIS → KML</h1>
     <p>Export půdních bloků pro DJI FlightHub 2 (záchrana srnčat)</p>
-    <a href="/wiki" style="display:inline-block;margin-top:0.5rem;font-size:0.83rem;color:#2d6a2d;text-decoration:none;border:1px solid #7ab87a;border-radius:6px;padding:0.25rem 0.7rem;">📖 Wiki / Nápověda</a>
+    <a href="wiki.html" style="display:inline-block;margin-top:0.5rem;font-size:0.83rem;color:#2d6a2d;text-decoration:none;border:1px solid #7ab87a;border-radius:6px;padding:0.25rem 0.7rem;">📖 Wiki / Nápověda</a>
   </header>
 
   <div class="card">
@@ -263,9 +333,9 @@
 
       <!-- File upload -->
       <div class="upload-zone" id="upload-zone">
-        <input type="file" name="zip_file" id="zip-input" accept=".zip" required />
+        <input type="file" name="zip_file" id="zip-input" accept=".zip,application/zip" multiple required />
         <div class="upload-icon">📦</div>
-        <p><strong>Přetáhni ZIP soubor sem</strong><br>nebo klikni pro výběr</p>
+        <p><strong>Přetáhni ZIP soubor sem</strong><br>nebo klikni pro výběr (lze i víc okresů najednou)</p>
         <div id="file-name"></div>
       </div>
 
@@ -303,6 +373,13 @@
     </form>
   </div>
 
+  <p class="privacy">🔒 Soubory se zpracují přímo v tvém prohlížeči — nic se neodesílá na server.</p>
+
+  <section class="preview" id="preview" hidden>
+    <div class="preview-head"><strong>Náhled exportu</strong><span id="preview-sub"></span></div>
+    <svg id="preview-map" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Náhled exportovaných půdních bloků"></svg>
+  </section>
+
   <div class="tips">
     <details>
       <summary>Kde stáhnout ZIP soubor s SHP daty?</summary>
@@ -310,7 +387,7 @@
         <li>Jdi na <strong>eagri.cz → LPIS data</strong></li>
         <li>Nastav: <strong>Entita = DPB</strong>, <strong>Typ = SHP</strong>, Území = Okres</li>
         <li>Klikni <em>Vygenerovat seznam souborů</em> a stáhni první řádek (celý okres)</li>
-        <li>Pokud se nenajdou žádné bloky, stáhni i sousední okresy a spoj ZIP soubory do jednoho</li>
+        <li>Pokud se nenajdou žádné bloky, stáhni i sousední okresy a vyber všechny ZIP soubory najednou</li>
         <li>Data se aktualizují týdně — stahuj vždy nejnovější export</li>
       </ul>
     </details>
@@ -322,100 +399,9 @@
     <p>Zpracovávám SHP data…</p>
   </div>
 
-  <script>
-    const form = document.getElementById("convert-form");
-    const zipInput = document.getElementById("zip-input");
-    const uploadZone = document.getElementById("upload-zone");
-    const fileNameEl = document.getElementById("file-name");
-    const submitBtn = document.getElementById("submit-btn");
-    const errorMsg = document.getElementById("error-msg");
-    const successMsg = document.getElementById("success-msg");
-    const loading = document.getElementById("loading");
-
-    // Drag & drop visual feedback
-    uploadZone.addEventListener("dragover", e => { e.preventDefault(); uploadZone.classList.add("drag-over"); });
-    uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("drag-over"));
-    uploadZone.addEventListener("drop", e => {
-      e.preventDefault();
-      uploadZone.classList.remove("drag-over");
-      if (e.dataTransfer.files[0]) {
-        zipInput.files = e.dataTransfer.files;
-        showFileName(e.dataTransfer.files[0].name);
-      }
-    });
-
-    zipInput.addEventListener("change", () => {
-      if (zipInput.files[0]) showFileName(zipInput.files[0].name);
-    });
-
-    function showFileName(name) {
-      fileNameEl.textContent = "✓ " + name;
-    }
-
-    function setLoading(on) {
-      loading.classList.toggle("show", on);
-      submitBtn.disabled = on;
-    }
-
-    function showError(text) {
-      errorMsg.textContent = text;
-      errorMsg.classList.add("show");
-      successMsg.classList.remove("show");
-    }
-
-    function showSuccess(text) {
-      successMsg.textContent = text;
-      successMsg.classList.add("show");
-      errorMsg.classList.remove("show");
-    }
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      errorMsg.classList.remove("show");
-      successMsg.classList.remove("show");
-
-      if (!zipInput.files[0]) { showError("Vyberte ZIP soubor."); return; }
-      const idUz = document.getElementById("id_uz").value.trim();
-      if (!idUz) { showError("Zadejte ID_UZ."); return; }
-
-      setLoading(true);
-
-      try {
-        const formData = new FormData(form);
-        const response = await fetch("/convert", { method: "POST", body: formData });
-
-        if (!response.ok) {
-          let msg = "Chyba při zpracování.";
-          try { msg = (await response.json()).error; } catch (_) {}
-          showError(msg);
-          return;
-        }
-
-        const count = response.headers.get("X-Block-Count");
-        const blob = await response.blob();
-
-        // Extract filename from Content-Disposition header
-        const cd = response.headers.get("Content-Disposition") || "";
-        const match = cd.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-        const filename = match ? match[1].replace(/['"]/g, "") : "lpis_export.kml";
-
-        // Trigger browser download
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-
-        showSuccess(`✓ Hotovo! Exportováno ${count ?? "?"} půdních bloků → ${filename}`);
-      } catch (err) {
-        showError("Chyba sítě nebo serveru. Zkuste to znovu.");
-      } finally {
-        setLoading(false);
-      }
-    });
-  </script>
+  <script src="js/lib/fflate.js"></script>
+  <script src="js/lib/proj4.js"></script>
+  <script src="js/lpis.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

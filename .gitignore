@@ -28,3 +28,10 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Playwright MCP scratch output
+.playwright-mcp/
+
+# Local Playwright install for tools/screenshots.mjs
+node_modules/
+package-lock.json

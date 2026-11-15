@@ -4,7 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wiki – LPIS → KML pro DJI FlightHub 2</title>
-  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <meta name="description" content="Návod: jak zjistit ID_UZ, stáhnout SHP data z LPIS a importovat půdní bloky jako KML do DJI FlightHub 2." />
+  <meta name="theme-color" content="#2d6a2d" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="LPIS → KML" />
+  <meta property="og:locale" content="cs_CZ" />
+  <meta property="og:title" content="Wiki – LPIS → KML pro DJI FlightHub 2" />
+  <meta property="og:description" content="Návod krok za krokem: ID_UZ, stažení SHP dat z LPIS, převod na KML a import do DJI FlightHub 2." />
+  <meta property="og:url" content="https://nix3r.github.io/LPIStoKML/wiki.html" />
+  <meta property="og:image" content="https://nix3r.github.io/LPIStoKML/og-image.png" />
+  <meta property="og:image:width" content="1280" />
+  <meta property="og:image:height" content="640" />
+  <meta property="og:image:alt" content="LPIS → KML: převodník půdních bloků s náhledem exportovaných polí" />
+  <meta name="twitter:card" content="summary_large_image" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -245,8 +258,8 @@
 
   <!-- Sidebar navigation -->
   <nav>
-    <a href="/" class="back-link">← Zpět na aplikaci</a>
-    <a href="/wiki" class="logo">🌾 LPIS → KML Wiki</a>
+    <a href="./" class="back-link">← Zpět na aplikaci</a>
+    <a href="wiki.html" class="logo">🌾 LPIS → KML Wiki</a>
 
     <div class="section-label">Úvod</div>
     <ul>
@@ -311,9 +324,15 @@
       <p>
         Aplikace přijme ZIP soubor stažený z portálu LPIS (obsahující SHP
         soubory), filtruje záznamy podle zadaného <strong>ID_UZ</strong>
-        hospodáře, přeproektuje souřadnice z S-JTSK do WGS-84 a vygeneruje
+        hospodáře, přeprojektuje souřadnice z S-JTSK do WGS-84 a vygeneruje
         soubor KML připravený pro DJI FlightHub 2.
       </p>
+      <div class="callout tip">
+        <strong>Data zůstávají u tebe</strong>
+        Vše se zpracuje přímo v prohlížeči. ZIP soubory se nikam
+        nenahrávají a aplikace funguje i jako obyčejná statická stránka
+        (např. na GitHub Pages).
+      </div>
       <ol class="steps">
         <li><span>Zjistíš <strong>ID_UZ</strong> zemědělského subjektu z veřejného LPIS registru.</span></li>
         <li><span>Stáhneš SHP data pro příslušný okres z portálu eagri.cz.</span></li>
@@ -368,9 +387,9 @@
 
       <div class="callout warn">
         <strong>Zemědělec hospodaří ve více okresech?</strong>
-        Stáhni ZIP soubory pro všechny příslušné okresy. Každý ZIP nahraj
-        do aplikace zvlášť, nebo je před nahráním ručně slouč do jednoho
-        (překopíruj SHP soubory ze všech ZIPů do jedné složky a znovu zazipuj).
+        Stáhni ZIP soubory pro všechny příslušné okresy a v aplikaci je
+        vyber (nebo přetáhni) všechny najednou — bloky ze všech okresů
+        se spojí do jednoho KML.
       </div>
 
       <div class="callout tip">
@@ -384,16 +403,16 @@
     <section id="jak-pouzit">
       <h2>Krok 3: Převod na KML</h2>
       <p>
-        Po stažení ZIP souboru přejdi na <a href="/">hlavní stránku aplikace</a>
+        Po stažení ZIP souboru přejdi na <a href="./">hlavní stránku aplikace</a>
         a postupuj takto:
       </p>
 
       <ol class="steps">
-        <li><span>Přetáhni ZIP soubor do oblasti nahrávání, nebo ho vyber kliknutím.</span></li>
+        <li><span>Přetáhni ZIP soubor (nebo více souborů) do oblasti nahrávání, nebo je vyber kliknutím.</span></li>
         <li><span>Zadej <strong>ID_UZ</strong> zemědělského subjektu.</span></li>
         <li><span>Volitelně vyplň <strong>název výstupního souboru</strong> (bez přípony). Pokud necháš prázdné, použije se <code>lpis_export</code>.</span></li>
         <li><span>Chceš exportovat jen <strong>jeden konkrétní blok</strong>? Vyplň jeho číslo (např. <code>4003/2</code>) do pole „Číslo půdního bloku".</span></li>
-        <li><span>Klikni <em>Převést a stáhnout KML</em>. Soubor se automaticky stáhne a zobrazí se počet nalezených bloků.</span></li>
+        <li><span>Klikni <em>Převést a stáhnout KML</em>. Soubor se automaticky stáhne, zobrazí se počet nalezených bloků a náhled jejich tvarů.</span></li>
       </ol>
 
       <div class="callout warn">
@@ -474,8 +493,7 @@
       <h3>Nalezeno 0 bloků</h3>
       <p>
         Zemědělec pravděpodobně hospodaří v jiném okrese. Stáhni SHP data
-        i pro sousední okresy a nahraj je do aplikace (každý ZIP zvlášť,
-        nebo je slouč do jednoho).
+        i pro sousední okresy a vyber v aplikaci všechny ZIP soubory najednou.
       </p>
 
       <h3>Chybové hlášení „Sloupec ID_UZ nenalezen"</h3>
@@ -485,10 +503,11 @@
         Jiné entity (např. BPEJ, LPIS_FB) mají odlišnou strukturu sloupců.
       </p>
 
-      <h3>Chyba při nahrávání velkého ZIP souboru</h3>
+      <h3>Velký ZIP soubor (celý kraj)</h3>
       <p>
-        Aplikace přijme soubory do <strong>500 MB</strong>. Soubory za celý
-        kraj mohou být větší — v takovém případě stáhni jen příslušné okresy.
+        Soubory se načítají do paměti prohlížeče. Data za okres zvládne
+        každý počítač, u souborů za celý kraj (stovky MB) může být
+        zpracování pomalé — v takovém případě stáhni jen příslušné okresy.
       </p>
 
       <h3>Neplatný ZIP soubor</h3>
@@ -501,24 +520,26 @@
     <!-- Instalace -->
     <section id="instalace">
       <h2>Instalace a spuštění (lokálně)</h2>
-      <p>Pro spuštění aplikace na vlastním počítači potřebuješ Python 3.9+.</p>
-
-      <h3>Závislosti</h3>
-      <pre><code>pip install flask geopandas simplekml</code></pre>
-
-      <h3>Spuštění</h3>
-      <pre><code>python app.py</code></pre>
+      <p>
+        Aplikace je čistě statická (HTML + JavaScript) — nepotřebuje žádný
+        backend. Stačí složku <code>web/</code> obsloužit libovolným
+        webovým serverem, například:
+      </p>
+      <pre><code>python -m http.server 5000 --directory web</code></pre>
+      <p>nebo přes přiložený Flask server:</p>
+      <pre><code>pip install -r requirements.txt
+python app.py</code></pre>
       <p>Aplikace poběží na <code>http://localhost:5000</code>.</p>
 
-      <h3>Závislosti (requirements.txt)</h3>
+      <h3>Použité knihovny</h3>
       <table>
-        <thead><tr><th>Balíček</th><th>Účel</th></tr></thead>
+        <thead><tr><th>Knihovna</th><th>Účel</th></tr></thead>
         <tbody>
-          <tr><td><code>flask</code></td><td>Webový server a routing</td></tr>
-          <tr><td><code>geopandas</code></td><td>Čtení SHP souborů, reprojekcí souřadnic</td></tr>
-          <tr><td><code>simplekml</code></td><td>Generování KML souboru</td></tr>
+          <tr><td><a href="https://github.com/101arrowz/fflate" target="_blank" rel="noopener"><code>fflate</code></a></td><td>Rozbalení ZIP souborů v prohlížeči</td></tr>
+          <tr><td><a href="https://github.com/proj4js/proj4js" target="_blank" rel="noopener"><code>proj4js</code></a></td><td>Převod souřadnic S-JTSK (EPSG:5514) → WGS-84</td></tr>
         </tbody>
       </table>
+      <p>Čtení SHP/DBF souborů a generování KML obstarává vlastní kód v <code>web/js/lpis.js</code>.</p>
     </section>
 
   </main>
