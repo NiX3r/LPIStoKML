@@ -34,12 +34,12 @@ jobs:
 
       - name: Prepare site
         env:
-          BASE_URL: ${{ steps.pages.outputs.base_url }}  # e.g. https://nix3r.github.io/LPIStoKML or a custom domain
+          BASE_URL: ${{ steps.pages.outputs.base_url }}  # https://lpis.iliev.cz (custom domain) or https://nix3r.github.io/LPIStoKML
         run: |
           mkdir -p _site
           cp -r web/. _site/
           # Link previews (og:url, og:image) need absolute URLs.
-          sed -i "s|https://nix3r.github.io/LPIStoKML/|${BASE_URL}/|g" _site/index.html _site/wiki.html
+          sed -i "s|https://lpis.iliev.cz/|${BASE_URL}/|g" _site/index.html _site/wiki.html
           grep -q "content=\"${BASE_URL}/og-image.png\"" _site/index.html
           touch _site/.nojekyll
 

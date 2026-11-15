@@ -4,9 +4,9 @@ A web app that converts Czech agricultural land parcel data (LPIS) from Shapefil
 
 Primary use case: scanning fields with a drone before mowing to rescue fawns and other wildlife.
 
-[![LPIS → KML](docs/images/thumbnail.png)](https://nix3r.github.io/LPIStoKML/)
+[![LPIS → KML](docs/images/thumbnail.png)](https://lpis.iliev.cz/)
 
-**▶ Live app: [nix3r.github.io/LPIStoKML](https://nix3r.github.io/LPIStoKML/)** · [Wiki (CZ)](https://nix3r.github.io/LPIStoKML/wiki.html)
+**▶ Live app: [lpis.iliev.cz](https://lpis.iliev.cz/)** · [Wiki (CZ)](https://lpis.iliev.cz/wiki.html)
 
 Runs entirely in the browser: the ZIP is unpacked, filtered and reprojected on your computer and never uploaded anywhere. The whole app is a static page, hosted on GitHub Pages.
 
