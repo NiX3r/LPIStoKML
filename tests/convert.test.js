@@ -1,4 +1,4 @@
-// Run: node --test tests/
+// Run: node --test "tests/*.test.js"
 // Converts the sample LPIS export and checks it against reference coordinates computed with pyproj (EPSG:5514 → 4326).
 const test = require("node:test");
 const assert = require("node:assert/strict");

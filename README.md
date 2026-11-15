@@ -47,7 +47,7 @@ Open [http://localhost:5000](http://localhost:5000).
 ### Tests
 
 ```bash
-node --test tests/
+node --test "tests/*.test.js"
 ```
 
 Converts `test/20260523-930318-DPB-SHP.zip` (ID_UZ `62418`) and checks the coordinates against pyproj.
